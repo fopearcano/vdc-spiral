@@ -31,6 +31,7 @@
         <div class="section-title"><span><i class="dot red"></i>Characters</span><label class="mini-toggle" title="Show characters"><input id="charactersOn" type="checkbox" checked><i></i></label></div>
         <div id="characters" class="section-body">
           <div id="characterList"></div>
+          <div class="layer-appearance"><label>Overall size <span class="range-number"><input id="charactersScale" type="range" min="1" max="500" value="100"><input id="charactersScaleNumber" type="number" min="1" max="500" value="100"></span></label><label>Shape <select id="charactersPaint"><option value="fill">Fill</option><option value="stroke">Stroke</option></select></label></div>
           <button class="add-button" id="addCharacter">＋ Add character</button>
         </div>
       </section>
@@ -39,6 +40,7 @@
         <div class="section-title"><span><i class="square blue"></i>Chapters</span><label class="mini-toggle" title="Show chapters"><input id="chaptersOn" type="checkbox" checked><i></i></label></div>
         <div id="chapters" class="section-body">
           <div id="chapterList"></div>
+          <div class="layer-appearance"><label>Overall size <span class="range-number"><input id="chaptersScale" type="range" min="1" max="500" value="100"><input id="chaptersScaleNumber" type="number" min="1" max="500" value="100"></span></label><label>Shape <select id="chaptersPaint"><option value="fill">Fill</option><option value="stroke">Stroke</option></select></label></div>
           <button class="add-button" id="addChapter">＋ Add chapter</button>
         </div>
       </section>
@@ -47,6 +49,7 @@
         <div class="section-title"><span><i class="triangle green"></i>Scenes</span><label class="mini-toggle" title="Show scenes"><input id="scenesOn" type="checkbox" checked><i></i></label></div>
         <div id="scenes" class="section-body">
           <div id="sceneList"></div>
+          <div class="layer-appearance"><label>Overall size <span class="range-number"><input id="scenesScale" type="range" min="1" max="500" value="100"><input id="scenesScaleNumber" type="number" min="1" max="500" value="100"></span></label><label>Shape <select id="scenesPaint"><option value="fill">Fill</option><option value="stroke">Stroke</option></select></label></div>
           <button class="add-button" id="addScene">＋ Add scene</button>
         </div>
       </section>
@@ -65,7 +68,7 @@
           <label class="switch-line"><span><strong>Golden ratio</strong><small>Single logarithmic curve</small></span><input type="checkbox" id="goldenOn" checked><i></i></label>
           <div class="compact-controls" id="goldenControls">
             <label>Scale <span class="range-number"><input id="goldenScale" type="range" min="1" max="5000" value="100"><input id="goldenScaleNumber" type="number" min="1" max="5000" value="100" aria-label="Golden scale percent"></span></label>
-            <label class="mini">Stroke <input id="goldenWidth" type="number" min="0.25" max="30" step="0.25" value="2"></label>
+            <label class="mini">Stroke <span class="range-number"><input id="goldenWidth" type="range" min="0.25" max="100" step="0.25" value="2"><input id="goldenWidthNumber" type="number" min="0.25" max="100" step="0.25" value="2"></span></label>
             <input aria-label="Golden color" id="goldenColor" type="color" value="#d79b2c">
           </div>
           <div class="opacity-control"><label>Opacity <output id="goldenOpacityValue">90%</output></label><input id="goldenOpacity" type="range" min="0" max="100" value="90"></div>
@@ -76,7 +79,7 @@
             <div class="range-labels"><span>1%</span><span>5000%</span></div>
           </div>
           <div class="compact-controls spiral-appearance">
-            <label class="mini">Stroke <input id="fibWidth" type="number" min="0.25" max="30" step="0.25" value="2.2"></label>
+            <label class="mini">Stroke <span class="range-number"><input id="fibWidth" type="range" min="0.25" max="100" step="0.25" value="2.2"><input id="fibWidthNumber" type="number" min="0.25" max="100" step="0.25" value="2.2"></span></label>
             <label>Opacity <span class="range-number"><input id="fibOpacity" type="range" min="0" max="100" value="95"><input id="fibOpacityNumber" type="number" min="0" max="100" value="95" aria-label="Fibonacci opacity percent"></span></label>
           </div>
           <div class="shape-control">
@@ -104,10 +107,9 @@
         <span class="divider"></span>
         <label class="grid-toggle"><input id="gridOn" type="checkbox" checked><span>Grid</span></label>
         <label class="grid-toggle"><input id="axesOn" type="checkbox" checked><span>Axes</span></label>
+        <label class="grid-toggle"><input id="axisNumbersOn" type="checkbox" checked><span>Numbers</span></label>
       </div>
       <canvas id="diagram" aria-label="Interactive spiral story diagram"></canvas>
-      <div class="canvas-hint"><span>↖</span> Drag to move <i></i> Double-click for properties <i></i> Scroll to zoom</div>
-      <div class="legend"><span><i class="legend-line gold"></i>Fibonacci system</span><span><i class="legend-line gray"></i>Construction</span></div>
     </section>
 
     <aside class="inspector is-hidden" id="inspector"></aside>
