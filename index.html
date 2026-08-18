@@ -20,12 +20,14 @@
     <aside class="sidebar" id="sidebar">
       <div class="tabs" role="tablist">
         <button class="tab active" data-tab="characters" role="tab">Characters</button>
+        <button class="tab" data-tab="chapters" role="tab">Chapters</button>
+        <button class="tab" data-tab="scenes" role="tab">Scenes</button>
         <button class="tab" data-tab="circles" role="tab">Circles</button>
         <button class="tab" data-tab="overlays" role="tab">Spirals</button>
       </div>
 
       <section class="tool-section tab-panel">
-        <div class="section-title"><span><i class="dot red"></i>Characters</span></div>
+        <div class="section-title"><span><i class="dot red"></i>Characters</span><label class="mini-toggle" title="Show characters"><input id="charactersOn" type="checkbox" checked><i></i></label></div>
         <div id="characters" class="section-body">
           <div id="characterList"></div>
           <button class="add-button" id="addCharacter">＋ Add character</button>
@@ -33,7 +35,23 @@
       </section>
 
       <section class="tool-section tab-panel" hidden>
-        <div class="section-title"><span><i class="ring"></i>Intimacy circles</span></div>
+        <div class="section-title"><span><i class="square blue"></i>Chapters</span><label class="mini-toggle" title="Show chapters"><input id="chaptersOn" type="checkbox" checked><i></i></label></div>
+        <div id="chapters" class="section-body">
+          <div id="chapterList"></div>
+          <button class="add-button" id="addChapter">＋ Add chapter</button>
+        </div>
+      </section>
+
+      <section class="tool-section tab-panel" hidden>
+        <div class="section-title"><span><i class="triangle green"></i>Scenes</span><label class="mini-toggle" title="Show scenes"><input id="scenesOn" type="checkbox" checked><i></i></label></div>
+        <div id="scenes" class="section-body">
+          <div id="sceneList"></div>
+          <button class="add-button" id="addScene">＋ Add scene</button>
+        </div>
+      </section>
+
+      <section class="tool-section tab-panel" hidden>
+        <div class="section-title"><span><i class="ring"></i>Intimacy circles</span><label class="mini-toggle" title="Show circles"><input id="circlesOn" type="checkbox" checked><i></i></label></div>
         <div id="circles" class="section-body">
           <div id="circleList"></div>
           <button class="add-button" id="addCircle">＋ Add circle</button>
@@ -79,6 +97,7 @@
         <button id="fitBtn" title="Fit view">⌗</button>
         <span class="divider"></span>
         <label class="grid-toggle"><input id="gridOn" type="checkbox" checked><span>Grid</span></label>
+        <label class="grid-toggle"><input id="axesOn" type="checkbox" checked><span>Axes</span></label>
       </div>
       <canvas id="diagram" aria-label="Interactive spiral story diagram"></canvas>
       <div class="canvas-hint"><span>↖</span> Drag characters to place them <i></i> Scroll to zoom</div>

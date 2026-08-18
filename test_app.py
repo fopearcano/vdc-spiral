@@ -34,12 +34,16 @@ class SpiralServerTest(unittest.TestCase):
         self.assertIn('id="spiralLineStyle"', body)
         self.assertIn('id="goldenScaleNumber"', body)
         self.assertIn('max="5000"', body)
+        self.assertIn('id="chapterList"', body)
+        self.assertIn('id="sceneList"', body)
+        self.assertIn('id="circlesOn"', body)
 
     def test_javascript_is_served(self):
         with urllib.request.urlopen(self.base + "/app.js") as response:
             body = response.read().decode()
         self.assertIn("drawSpirals", body)
         self.assertIn("fibonacciSquares", body)
+        self.assertIn("drawEntities", body)
         self.assertEqual(response.headers["Cache-Control"], "no-store")
 
 
