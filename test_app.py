@@ -43,6 +43,7 @@ class SpiralServerTest(unittest.TestCase):
             body = response.read().decode()
         self.assertIn("drawSpirals", body)
         self.assertIn("fibonacciSquares", body)
+        self.assertIn("fibonacciSpiralPath", body)
         self.assertIn("drawEntities", body)
         self.assertEqual(response.headers["Cache-Control"], "no-store")
 

@@ -67,23 +67,23 @@ function fibonacciSquares(unit){
   }
   return squares;
 }
-function drawFibonacciArm(unit, construction){
+function drawFibonacciConstruction(unit){
   const squares=fibonacciSquares(unit);
-  squares.forEach((square,index)=>{
-    if(construction){ctx.strokeRect(square.x,square.y,square.s,square.s);return}
-    const phase=index%4;
-    const centers=[{x:square.x+square.s,y:square.y+square.s,a:Math.PI,b:Math.PI*1.5},{x:square.x,y:square.y+square.s,a:Math.PI*1.5,b:Math.PI*2},{x:square.x,y:square.y,a:0,b:Math.PI*.5},{x:square.x+square.s,y:square.y,a:Math.PI*.5,b:Math.PI}];
-    const arc=centers[phase];ctx.beginPath();ctx.arc(arc.x,arc.y,square.s,arc.a,arc.b);ctx.stroke();
-  });
+  squares.forEach(square=>ctx.strokeRect(square.x,square.y,square.s,square.s));
 }
 function drawConstruction(c){
   if(!state.construction||!state.fib)return;const n=state.sides,unit=1.35*state.zoom*state.fibScale/100;
   ctx.save();ctx.translate(c.x,c.y);ctx.strokeStyle=state.constructionColor;ctx.globalAlpha=state.constructionOpacity;ctx.lineWidth=1;ctx.setLineDash(state.constructionLineStyle==='dotted'?[3,5]:[]);
   const baseRadius=unit*2;ctx.beginPath();for(let i=0;i<=n;i++){const angle=-Math.PI/2+i*Math.PI*2/n;const x=Math.cos(angle)*baseRadius,y=Math.sin(angle)*baseRadius;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();
-  for(let i=0;i<n;i++){ctx.save();ctx.rotate(-Math.PI/2+i*Math.PI*2/n);drawFibonacciArm(unit,true);ctx.restore()}ctx.restore();
+  for(let i=0;i<n;i++){ctx.save();ctx.rotate(-Math.PI/2+i*Math.PI*2/n);drawFibonacciConstruction(unit);ctx.restore()}ctx.restore();
 }
 function spiralPath(rotation,scale,growth=.17){ctx.beginPath();for(let t=-5.5;t<7.1;t+=.035){let r=scale*Math.exp(growth*t),a=t+rotation,x=Math.cos(a)*r,y=Math.sin(a)*r;t===-5.5?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.stroke()}
-function drawSpirals(c){ctx.save();ctx.translate(c.x,c.y);ctx.setLineDash(state.spiralLineStyle==='dotted'?[3,5]:[]);if(state.golden){ctx.strokeStyle=state.goldenColor;ctx.globalAlpha=.9;ctx.lineWidth=state.goldenWidth;spiralPath(0,18*state.goldenScale/100,.22)}if(state.fib){ctx.strokeStyle='#d79b2c';ctx.globalAlpha=.82;ctx.lineWidth=1.65;const unit=1.35*state.zoom*state.fibScale/100;for(let i=0;i<state.sides;i++){ctx.save();ctx.rotate(-Math.PI/2+i*Math.PI*2/state.sides);drawFibonacciArm(unit,false);ctx.restore()}}ctx.restore()}
+function fibonacciSpiralPath(unit,rotation){
+  const phi=(1+Math.sqrt(5))/2;ctx.beginPath();
+  for(let theta=-Math.PI;theta<=Math.PI*5;theta+=.025){const radius=unit*Math.pow(phi,2*theta/Math.PI),angle=theta+rotation,x=Math.cos(angle)*radius,y=Math.sin(angle)*radius;theta===-Math.PI?ctx.moveTo(x,y):ctx.lineTo(x,y)}
+  ctx.stroke();
+}
+function drawSpirals(c){ctx.save();ctx.translate(c.x,c.y);ctx.setLineDash(state.spiralLineStyle==='dotted'?[3,5]:[]);if(state.golden){ctx.strokeStyle=state.goldenColor;ctx.globalAlpha=.9;ctx.lineWidth=state.goldenWidth;spiralPath(0,18*state.goldenScale/100,.22)}if(state.fib){ctx.strokeStyle='#d79b2c';ctx.globalAlpha=.95;ctx.lineWidth=2.2;const unit=1.35*state.zoom*state.fibScale/100;for(let i=0;i<state.sides;i++)fibonacciSpiralPath(unit,-Math.PI/2+i*Math.PI*2/state.sides)}ctx.restore()}
 function drawEntities(){
   [['character','characters','charactersVisible'],['chapter','chapters','chaptersVisible'],['scene','scenes','scenesVisible']].forEach(([type,key,visible])=>{if(!state[visible])return;state[key].forEach(p=>{const q=screen(p);ctx.save();ctx.shadowColor='#17202322';ctx.shadowBlur=5;ctx.shadowOffsetY=2;ctx.fillStyle=p.color;ctx.beginPath();if(type==='character')ctx.arc(q.x,q.y,p.size,0,Math.PI*2);if(type==='chapter')ctx.rect(q.x-p.size,q.y-p.size,p.size*2,p.size*2);if(type==='scene'){ctx.moveTo(q.x,q.y-p.size);ctx.lineTo(q.x+p.size,q.y+p.size);ctx.lineTo(q.x-p.size,q.y+p.size);ctx.closePath()}ctx.fill();ctx.shadowColor='transparent';ctx.fillStyle='#fff';ctx.font=`600 ${Math.max(5,Math.min(p.textSize,p.size*1.2))}px DM Sans`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.initials,q.x,q.y+(type==='scene'?p.size*.2:0));ctx.fillStyle=state.theme==='dark'?'#e7ecea':'#28312f';ctx.font=`600 ${p.textSize}px DM Sans`;ctx.fillText(p.name,q.x,q.y+p.size+p.textSize+2);ctx.restore()})});
 }
