@@ -67,6 +67,9 @@ class SpiralServerTest(unittest.TestCase):
         self.assertIn("function animateZoom", body)
         self.assertIn('id="editPaint"', body)
         self.assertIn('id="editTextColor"', body)
+        self.assertIn("function entityGlyph", body)
+        self.assertIn("function reorder", body)
+        self.assertIn('data-action="up"', body)
         self.assertEqual(response.headers["Cache-Control"], "no-store")
 
 
