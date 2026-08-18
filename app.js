@@ -13,15 +13,15 @@ const defaults = {
   spiralLineStyle: 'solid', constructionLineStyle: 'solid', constructionOpacity: .25,
   constructionColor: '#8aa1a1', theme: 'light',
   characters: [
-    {id: 1, name: 'Maurice', initials: 'MC', x: 0, y: 0, color: '#e35e58', size: 15, textSize: 10},
-    {id: 2, name: 'Léonie', initials: 'L', x: 104, y: -76, color: '#4d8883', size: 13, textSize: 10},
-    {id: 3, name: 'The Stranger', initials: 'TS', x: -154, y: 105, color: '#697b9a', size: 13, textSize: 10},
+    {id: 1, name: 'Maurice', initials: 'MC', x: 0, y: 0, color: '#e35e58', textColor: '#28312f', paint: 'inherit', size: 15, textSize: 10},
+    {id: 2, name: 'Léonie', initials: 'L', x: 104, y: -76, color: '#4d8883', textColor: '#28312f', paint: 'inherit', size: 13, textSize: 10},
+    {id: 3, name: 'The Stranger', initials: 'TS', x: -154, y: 105, color: '#697b9a', textColor: '#28312f', paint: 'inherit', size: 13, textSize: 10},
   ],
   chapters: [
-    {id: 1, name: 'Chapter 1', initials: '1', x: -92, y: -112, color: '#537da1', size: 14, textSize: 10},
+    {id: 1, name: 'Chapter 1', initials: '1', x: -92, y: -112, color: '#537da1', textColor: '#28312f', paint: 'inherit', size: 14, textSize: 10},
   ],
   scenes: [
-    {id: 1, name: 'Opening scene', initials: '1', x: 142, y: 94, color: '#65966f', size: 15, textSize: 10},
+    {id: 1, name: 'Opening scene', initials: '1', x: 142, y: 94, color: '#65966f', textColor: '#28312f', paint: 'inherit', size: 15, textSize: 10},
   ],
   circles: [
     {id: 1, name: 'Inner circle', radius: 72, color: '#567d78', width: 1.5, opacity: .8},
@@ -31,7 +31,7 @@ const defaults = {
 };
 let state = JSON.parse(localStorage.getItem('spiral-state') || 'null') || structuredClone(defaults);
 for (const [key, value] of Object.entries(defaults)) if (state[key] === undefined) state[key] = structuredClone(value);
-['characters','chapters','scenes'].forEach(key=>state[key].forEach(item => { if (item.textSize === undefined) item.textSize = 10; }));
+['characters','chapters','scenes'].forEach(key=>state[key].forEach(item => { if (item.textSize === undefined) item.textSize = 10;if(item.paint===undefined)item.paint='inherit';if(item.textColor===undefined)item.textColor='#28312f'; }));
 let selected = null, dragging = null;
 let currentProjectId = localStorage.getItem('spiral-current-project');
 
@@ -90,7 +90,7 @@ function fibonacciSpiralPath(unit,rotation){
 }
 function drawSpirals(c){ctx.save();ctx.translate(c.x,c.y);ctx.setLineDash(state.spiralLineStyle==='dotted'?[3,5]:[]);if(state.golden){ctx.strokeStyle=state.goldenColor;ctx.globalAlpha=state.goldenOpacity;ctx.lineWidth=state.goldenWidth;infiniteSpiralPath(0,18*state.goldenScale/100,.22)}if(state.fib){ctx.strokeStyle='#d79b2c';ctx.globalAlpha=state.fibOpacity;ctx.lineWidth=state.fibWidth;const unit=1.35*state.zoom*state.fibScale/100;for(let i=0;i<state.sides;i++)fibonacciSpiralPath(unit,-Math.PI/2+i*Math.PI*2/state.sides)}ctx.restore()}
 function drawEntities(){
-  [['character','characters','charactersVisible'],['chapter','chapters','chaptersVisible'],['scene','scenes','scenesVisible']].forEach(([type,key,visible])=>{if(!state[visible])return;const scale=state[key+'Scale']/100,textScale=state[key+'TextScale']/100,paint=state[key+'Paint'];state[key].forEach(p=>{const q=screen(p),size=p.size*scale,textSize=p.textSize*textScale;ctx.save();ctx.shadowColor='#17202322';ctx.shadowBlur=5;ctx.shadowOffsetY=2;ctx.fillStyle=p.color;ctx.strokeStyle=p.color;ctx.lineWidth=Math.max(1.5,size*.12);ctx.beginPath();if(type==='character')ctx.arc(q.x,q.y,size,0,Math.PI*2);if(type==='chapter')ctx.rect(q.x-size,q.y-size,size*2,size*2);if(type==='scene'){ctx.moveTo(q.x,q.y-size);ctx.lineTo(q.x+size,q.y+size);ctx.lineTo(q.x-size,q.y+size);ctx.closePath()}paint==='stroke'?ctx.stroke():ctx.fill();ctx.shadowColor='transparent';ctx.fillStyle=paint==='stroke'?p.color:'#fff';ctx.font=`600 ${Math.max(1,Math.min(textSize,size*1.2))}px DM Sans`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.initials,q.x,q.y+(type==='scene'?size*.2:0));ctx.fillStyle=state.theme==='dark'?'#e7ecea':'#28312f';ctx.font=`600 ${textSize}px DM Sans`;ctx.fillText(p.name,q.x,q.y+size+textSize+2);ctx.restore()})});
+  [['character','characters','charactersVisible'],['chapter','chapters','chaptersVisible'],['scene','scenes','scenesVisible']].forEach(([type,key,visible])=>{if(!state[visible])return;const scale=state[key+'Scale']/100,textScale=state[key+'TextScale']/100,layerPaint=state[key+'Paint'];state[key].forEach(p=>{const q=screen(p),size=p.size*scale,textSize=p.textSize*textScale,paint=p.paint==='inherit'?layerPaint:p.paint;ctx.save();ctx.shadowColor='#17202322';ctx.shadowBlur=5;ctx.shadowOffsetY=2;ctx.fillStyle=p.color;ctx.strokeStyle=p.color;ctx.lineWidth=Math.max(1.5,size*.12);ctx.beginPath();if(type==='character')ctx.arc(q.x,q.y,size,0,Math.PI*2);if(type==='chapter')ctx.rect(q.x-size,q.y-size,size*2,size*2);if(type==='scene'){ctx.moveTo(q.x,q.y-size);ctx.lineTo(q.x+size,q.y+size);ctx.lineTo(q.x-size,q.y+size);ctx.closePath()}paint==='stroke'?ctx.stroke():ctx.fill();ctx.shadowColor='transparent';ctx.fillStyle=p.textColor;ctx.font=`600 ${Math.max(1,Math.min(textSize,size*1.2))}px DM Sans`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.initials,q.x,q.y+(type==='scene'?size*.2:0));ctx.font=`600 ${textSize}px DM Sans`;ctx.fillText(p.name,q.x,q.y+size+textSize+2);ctx.restore()})});
 }
 
 function renderLists(){
@@ -108,11 +108,13 @@ function renderInspector(){
   const isEntity=selected.type!=='circle';$('#inspector').innerHTML=`<button class="close-inspector" id="closeInspector" aria-label="Close properties">×</button><h2>${p.name}</h2><div class="type">${isEntity?selected.type.toUpperCase():'INTIMACY CIRCLE'}</div>
     <div class="field"><label>Name</label><input id="editName" type="text" value="${p.name}"></div>
     <div class="field"><label>Color</label><div class="color-row"><input id="editColor" type="color" value="${p.color}"></div></div>
+    ${isEntity?`<div class="field"><label>Fill / stroke</label><select id="editPaint"><option value="inherit" ${p.paint==='inherit'?'selected':''}>Use layer setting</option><option value="fill" ${p.paint==='fill'?'selected':''}>Fill</option><option value="stroke" ${p.paint==='stroke'?'selected':''}>Stroke</option></select></div><div class="field"><label>Text color</label><div class="color-row"><input id="editTextColor" type="color" value="${p.textColor}"></div></div>`:''}
     <div class="field"><label>${isEntity?'Shape size':'Radius'} <output id="editSizeOutput">${isEntity?p.size:p.radius}</output></label><span class="range-number"><input id="editSize" type="range" min="${isEntity?1:10}" max="${isEntity?100:2000}" value="${isEntity?p.size:p.radius}"><input id="editSizeNumber" type="number" min="${isEntity?1:10}" max="${isEntity?100:2000}" value="${isEntity?p.size:p.radius}" aria-label="${isEntity?'Shape size':'Circle radius'}"></span></div>
     ${isEntity?`<div class="field"><label>Text size <output id="editTextSizeOutput">${p.textSize}</output></label><span class="range-number"><input id="editTextSize" type="range" min="1" max="72" value="${p.textSize}"><input id="editTextSizeNumber" type="number" min="1" max="72" value="${p.textSize}" aria-label="Text size"></span></div>`:''}
     ${isEntity?'':`<div class="field"><label>Stroke width <output id="editWidthOutput">${p.width}</output></label><input id="editWidth" type="range" min="0.5" max="100" step="0.5" value="${p.width}"></div><div class="field"><label>Opacity <output id="editOpacityOutput">${Math.round(p.opacity*100)}%</output></label><input id="editOpacity" type="range" min="5" max="100" value="${p.opacity*100}"></div><div class="field"><label>Line style</label><select id="editLineStyle"><option value="solid" ${p.lineStyle!=='dotted'?'selected':''}>Normal</option><option value="dotted" ${p.lineStyle==='dotted'?'selected':''}>Dotted</option></select></div>`}
     <button class="delete" id="deleteSelected">Delete ${selected.type}</button>`;
   $('#editName').oninput=e=>update('name',e.target.value);$('#editColor').oninput=e=>update('color',e.target.value);
+  if(isEntity){$('#editPaint').onchange=e=>update('paint',e.target.value);$('#editTextColor').oninput=e=>update('textColor',e.target.value)}
   bindRangeNumber('editSize',isEntity?'size':'radius','editSizeOutput');
   if(isEntity) bindRangeNumber('editTextSize','textSize','editTextSizeOutput');
   if(!isEntity){$('#editWidth').oninput=e=>{p.width=+e.target.value;$('#editWidthOutput').textContent=p.width;save();draw()};$('#editOpacity').oninput=e=>{p.opacity=+e.target.value/100;$('#editOpacityOutput').textContent=Math.round(p.opacity*100)+'%';save();draw()}}
@@ -127,10 +129,10 @@ function hideInspector(){
 }
 function remove(type,id){const keys={character:'characters',chapter:'chapters',scene:'scenes',circle:'circles'},key=keys[type];state[key]=state[key].filter(x=>x.id!==id);if(selected?.id===id&&selected?.type===type)selected=null;save();renderLists();renderInspector();draw()}
 
-$('#addCharacter').onclick=()=>{const id=Math.max(0,...state.characters.map(x=>x.id))+1;state.characters.push({id,name:`Character ${id}`,initials:`C${id}`,x:30*id%160-80,y:35*id%140-70,color:['#8a6eb0','#d47754','#4b8992'][id%3],size:13,textSize:10});save();renderLists();draw()};
+$('#addCharacter').onclick=()=>{const id=Math.max(0,...state.characters.map(x=>x.id))+1;state.characters.push({id,name:`Character ${id}`,initials:`C${id}`,x:30*id%160-80,y:35*id%140-70,color:['#8a6eb0','#d47754','#4b8992'][id%3],textColor:'#28312f',paint:'inherit',size:13,textSize:10});save();renderLists();draw()};
 $('#addChapter').onclick=()=>addEntity('chapter','#537da1');
 $('#addScene').onclick=()=>addEntity('scene','#65966f');
-function addEntity(type,color){const key=type+'s',id=Math.max(0,...state[key].map(x=>x.id))+1;state[key].push({id,name:`${type[0].toUpperCase()+type.slice(1)} ${id}`,initials:String(id),x:38*id%180-90,y:47*id%160-80,color,size:14,textSize:10});save();renderLists();draw()}
+function addEntity(type,color){const key=type+'s',id=Math.max(0,...state[key].map(x=>x.id))+1;state[key].push({id,name:`${type[0].toUpperCase()+type.slice(1)} ${id}`,initials:String(id),x:38*id%180-90,y:47*id%160-80,color,textColor:'#28312f',paint:'inherit',size:14,textSize:10});save();renderLists();draw()}
 $('#addCircle').onclick=()=>{const id=Math.max(0,...state.circles.map(x=>x.id))+1;state.circles.push({id,name:`Circle ${id}`,radius:60+state.circles.length*50,color:'#6e9691',width:1.5,opacity:.55});save();renderLists();draw()};
 function hitTest(point){const layers=[['scene','scenes','scenesVisible'],['chapter','chapters','chaptersVisible'],['character','characters','charactersVisible']];for(const [type,key,visible] of layers){if(!state[visible])continue;for(const item of [...state[key]].reverse()){const q=screen(item),size=item.size*state[key+'Scale']/100;if(Math.hypot(point.x-q.x,point.y-q.y)<size+8)return{type,item}}}const c=center(),distance=Math.hypot(point.x-c.x,point.y-c.y),item=state.circlesVisible&&[...state.circles].reverse().find(circle=>Math.abs(distance-circle.radius*state.zoom)<Math.max(7,circle.width/2));return item?{type:'circle',item}:null}
 canvas.addEventListener('pointerdown',e=>{const r=canvas.getBoundingClientRect(),hit=hitTest({x:e.clientX-r.left,y:e.clientY-r.top});if(hit){selected={type:hit.type,id:hit.item.id};renderLists();hideInspector();if(hit.type!=='circle'){dragging=hit.item;canvas.classList.add('dragging');canvas.setPointerCapture(e.pointerId)}return}selected=null;renderLists();renderInspector()});
