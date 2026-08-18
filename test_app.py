@@ -41,6 +41,9 @@ class SpiralServerTest(unittest.TestCase):
         self.assertIn('id="projectsPanel"', body)
         self.assertIn('id="newProject"', body)
         self.assertIn('id="recentProjects"', body)
+        self.assertIn('id="goldenOpacity"', body)
+        self.assertIn('id="fibWidth"', body)
+        self.assertIn('id="fibOpacity"', body)
 
     def test_javascript_is_served(self):
         with urllib.request.urlopen(self.base + "/app.js") as response:
@@ -53,6 +56,7 @@ class SpiralServerTest(unittest.TestCase):
         self.assertIn("addEventListener('dblclick'", body)
         self.assertIn("function saveProject", body)
         self.assertIn("function openProject", body)
+        self.assertIn("function infiniteSpiralPath", body)
         self.assertEqual(response.headers["Cache-Control"], "no-store")
 
 

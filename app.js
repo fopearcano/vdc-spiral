@@ -5,7 +5,8 @@ const $ = (s) => document.querySelector(s);
 const defaults = {
   zoom: 1, grid: true, axes: true, sides: 5, charactersVisible: true, chaptersVisible: true,
   scenesVisible: true, circlesVisible: true, golden: true, fib: true, construction: true,
-  goldenScale: 100, goldenWidth: 2, goldenColor: '#d79b2c', fibScale: 100,
+  goldenScale: 100, goldenWidth: 2, goldenOpacity: .9, goldenColor: '#d79b2c',
+  fibScale: 100, fibWidth: 2.2, fibOpacity: .95,
   spiralLineStyle: 'solid', constructionLineStyle: 'solid', constructionOpacity: .25,
   constructionColor: '#8aa1a1', theme: 'light',
   characters: [
@@ -78,13 +79,13 @@ function drawConstruction(c){
   const baseRadius=unit*2;ctx.beginPath();for(let i=0;i<=n;i++){const angle=-Math.PI/2+i*Math.PI*2/n;const x=Math.cos(angle)*baseRadius,y=Math.sin(angle)*baseRadius;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();
   for(let i=0;i<n;i++){ctx.save();ctx.rotate(-Math.PI/2+i*Math.PI*2/n);drawFibonacciConstruction(unit);ctx.restore()}ctx.restore();
 }
-function spiralPath(rotation,scale,growth=.17){ctx.beginPath();for(let t=-5.5;t<7.1;t+=.035){let r=scale*Math.exp(growth*t),a=t+rotation,x=Math.cos(a)*r,y=Math.sin(a)*r;t===-5.5?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.stroke()}
+function infiniteSpiralPath(rotation,scale,growth=.17){const maxRadius=Math.hypot(canvas.width/devicePixelRatio,canvas.height/devicePixelRatio)*1.5,start=Math.log(.05/scale)/growth,end=Math.log(maxRadius/scale)/growth;ctx.beginPath();for(let t=start;t<=end;t+=.025){const radius=scale*Math.exp(growth*t),angle=t+rotation,x=Math.cos(angle)*radius,y=Math.sin(angle)*radius;t===start?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.stroke()}
 function fibonacciSpiralPath(unit,rotation){
   const phi=(1+Math.sqrt(5))/2;ctx.beginPath();
   for(let theta=-Math.PI;theta<=Math.PI*5;theta+=.025){const radius=unit*Math.pow(phi,2*theta/Math.PI),angle=theta+rotation,x=Math.cos(angle)*radius,y=Math.sin(angle)*radius;theta===-Math.PI?ctx.moveTo(x,y):ctx.lineTo(x,y)}
   ctx.stroke();
 }
-function drawSpirals(c){ctx.save();ctx.translate(c.x,c.y);ctx.setLineDash(state.spiralLineStyle==='dotted'?[3,5]:[]);if(state.golden){ctx.strokeStyle=state.goldenColor;ctx.globalAlpha=.9;ctx.lineWidth=state.goldenWidth;spiralPath(0,18*state.goldenScale/100,.22)}if(state.fib){ctx.strokeStyle='#d79b2c';ctx.globalAlpha=.95;ctx.lineWidth=2.2;const unit=1.35*state.zoom*state.fibScale/100;for(let i=0;i<state.sides;i++)fibonacciSpiralPath(unit,-Math.PI/2+i*Math.PI*2/state.sides)}ctx.restore()}
+function drawSpirals(c){ctx.save();ctx.translate(c.x,c.y);ctx.setLineDash(state.spiralLineStyle==='dotted'?[3,5]:[]);if(state.golden){ctx.strokeStyle=state.goldenColor;ctx.globalAlpha=state.goldenOpacity;ctx.lineWidth=state.goldenWidth;infiniteSpiralPath(0,18*state.goldenScale/100,.22)}if(state.fib){ctx.strokeStyle='#d79b2c';ctx.globalAlpha=state.fibOpacity;ctx.lineWidth=state.fibWidth;const unit=1.35*state.zoom*state.fibScale/100;for(let i=0;i<state.sides;i++)fibonacciSpiralPath(unit,-Math.PI/2+i*Math.PI*2/state.sides)}ctx.restore()}
 function drawEntities(){
   [['character','characters','charactersVisible'],['chapter','chapters','chaptersVisible'],['scene','scenes','scenesVisible']].forEach(([type,key,visible])=>{if(!state[visible])return;state[key].forEach(p=>{const q=screen(p);ctx.save();ctx.shadowColor='#17202322';ctx.shadowBlur=5;ctx.shadowOffsetY=2;ctx.fillStyle=p.color;ctx.beginPath();if(type==='character')ctx.arc(q.x,q.y,p.size,0,Math.PI*2);if(type==='chapter')ctx.rect(q.x-p.size,q.y-p.size,p.size*2,p.size*2);if(type==='scene'){ctx.moveTo(q.x,q.y-p.size);ctx.lineTo(q.x+p.size,q.y+p.size);ctx.lineTo(q.x-p.size,q.y+p.size);ctx.closePath()}ctx.fill();ctx.shadowColor='transparent';ctx.fillStyle='#fff';ctx.font=`600 ${Math.max(5,Math.min(p.textSize,p.size*1.2))}px DM Sans`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.initials,q.x,q.y+(type==='scene'?p.size*.2:0));ctx.fillStyle=state.theme==='dark'?'#e7ecea':'#28312f';ctx.font=`600 ${p.textSize}px DM Sans`;ctx.fillText(p.name,q.x,q.y+p.size+p.textSize+2);ctx.restore()})});
 }
@@ -138,10 +139,12 @@ function syncZoom(){ $('#zoomLabel').textContent=Math.round(state.zoom*100)+'%' 
 $('#zoomIn').onclick=()=>{state.zoom=Math.min(20,state.zoom*1.25);syncZoom();draw()};$('#zoomOut').onclick=()=>{state.zoom=Math.max(.05,state.zoom*.8);syncZoom();draw()};$('#fitBtn').onclick=()=>{state.zoom=1;syncZoom();draw()};
 [['gridOn','grid'],['axesOn','axes'],['goldenOn','golden'],['fibOn','fib'],['constructionOn','construction']].forEach(([id,k])=>{const el=$('#'+id);el.checked=state[k];el.onchange=()=>{state[k]=el.checked;save();draw()}});
 [['charactersOn','charactersVisible'],['chaptersOn','chaptersVisible'],['scenesOn','scenesVisible'],['circlesOn','circlesVisible']].forEach(([id,key])=>{const el=$('#'+id);el.checked=state[key];el.onchange=()=>{state[key]=el.checked;if(!el.checked&&selected&&({character:'charactersVisible',chapter:'chaptersVisible',scene:'scenesVisible',circle:'circlesVisible'})[selected.type]===key){selected=null;renderLists();renderInspector()}save();draw()}});
-[['goldenWidth','goldenWidth',Number],['goldenColor','goldenColor',String],['constructionColor','constructionColor',String]].forEach(([id,k,cast])=>{const el=$('#'+id);el.value=state[k];el.oninput=()=>{state[k]=cast(el.value);save();draw()}});
+[['goldenWidth','goldenWidth',Number],['fibWidth','fibWidth',Number],['goldenColor','goldenColor',String],['constructionColor','constructionColor',String]].forEach(([id,k,cast])=>{const el=$('#'+id);el.value=state[k];el.oninput=()=>{state[k]=cast(el.value);save();draw()}});
 function bindScale(id,key,output){const range=$('#'+id),number=$('#'+id+'Number');const set=value=>{const next=Math.max(1,Math.min(5000,+value||1));state[key]=next;range.value=next;number.value=next;if(output)$(output).textContent=next+'%';save();draw()};range.value=state[key];number.value=state[key];range.oninput=e=>set(e.target.value);number.oninput=e=>set(e.target.value)}
 bindScale('goldenScale','goldenScale');bindScale('fibScale','fibScale','#fibScaleValue');
 $('#fibScaleValue').textContent=state.fibScale+'%';
+function bindOpacity(id,key,output){const range=$('#'+id),number=$('#'+id+'Number');const set=value=>{const percent=Math.max(0,Math.min(100,+value||0));state[key]=percent/100;range.value=percent;if(number)number.value=percent;if(output)$(output).textContent=percent+'%';save();draw()};range.value=Math.round(state[key]*100);if(number)number.value=range.value;range.oninput=e=>set(e.target.value);if(number)number.oninput=e=>set(e.target.value)}
+bindOpacity('goldenOpacity','goldenOpacity','#goldenOpacityValue');bindOpacity('fibOpacity','fibOpacity');
 [['spiralLineStyle','spiralLineStyle'],['constructionLineStyle','constructionLineStyle']].forEach(([id,k])=>{const el=$('#'+id);el.value=state[k];el.onchange=()=>{state[k]=el.value;save();draw()}});
 $('#constructionOpacity').value=state.constructionOpacity*100;$('#constructionOpacity').oninput=e=>{state.constructionOpacity=+e.target.value/100;save();draw()};
 $('#sides').value=state.sides;$('#sidesValue').textContent=`${state.sides} sides`;$('#sides').oninput=e=>{state.sides=+e.target.value;$('#sidesValue').textContent=`${state.sides} sides`;save();draw()};
