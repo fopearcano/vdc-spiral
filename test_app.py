@@ -26,6 +26,10 @@ class SpiralServerTest(unittest.TestCase):
         self.assertEqual(response.status, 200)
         self.assertIn("Story Geometry", body)
         self.assertIn('id="diagram"', body)
+        self.assertNotIn(">About<", body)
+        self.assertIn('id="themeBtn"', body)
+        self.assertIn('id="fibScale"', body)
+        self.assertIn('id="spiralLineStyle"', body)
 
     def test_javascript_is_served(self):
         with urllib.request.urlopen(self.base + "/app.js") as response:
