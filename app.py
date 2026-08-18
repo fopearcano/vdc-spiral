@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
+DEFAULT_PORT = 8003
 
 
 class SpiralHandler(SimpleHTTPRequestHandler):
@@ -30,7 +31,7 @@ class SpiralHandler(SimpleHTTPRequestHandler):
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the Spiral diagram studio")
     parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--port", type=int, default=DEFAULT_PORT)
     args = parser.parse_args()
     server = ThreadingHTTPServer((args.host, args.port), SpiralHandler)
     print(f"Spiral is running at http://{args.host}:{args.port}")

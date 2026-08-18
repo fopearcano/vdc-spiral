@@ -8,7 +8,7 @@ An interactive, browser-based story relationship diagram served by a tiny Python
 python app.py
 ```
 
-Open <http://127.0.0.1:8000>. No third-party Python dependencies are required.
+Open <http://127.0.0.1:8003>. No third-party Python dependencies are required.
 
 ## Features
 

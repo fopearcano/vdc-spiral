@@ -1,13 +1,15 @@
-import functools
 import threading
 import urllib.request
 import unittest
 from http.server import ThreadingHTTPServer
 
-from app import SpiralHandler
+from app import DEFAULT_PORT, SpiralHandler
 
 
 class SpiralServerTest(unittest.TestCase):
+    def test_default_port(self):
+        self.assertEqual(DEFAULT_PORT, 8003)
+
     @classmethod
     def setUpClass(cls):
         cls.server = ThreadingHTTPServer(("127.0.0.1", 0), SpiralHandler)
