@@ -48,6 +48,9 @@ class SpiralServerTest(unittest.TestCase):
         self.assertIn('id="chaptersPaint"', body)
         self.assertIn('id="scenesScale"', body)
         self.assertIn('id="axisNumbersOn"', body)
+        self.assertIn('id="charactersTextScale"', body)
+        self.assertIn('id="chaptersTextScale"', body)
+        self.assertIn('id="scenesTextScale"', body)
 
     def test_javascript_is_served(self):
         with urllib.request.urlopen(self.base + "/app.js") as response:
