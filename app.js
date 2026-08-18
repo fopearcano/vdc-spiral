@@ -29,6 +29,7 @@ let state = JSON.parse(localStorage.getItem('spiral-state') || 'null') || struct
 for (const [key, value] of Object.entries(defaults)) if (state[key] === undefined) state[key] = structuredClone(value);
 ['characters','chapters','scenes'].forEach(key=>state[key].forEach(item => { if (item.textSize === undefined) item.textSize = 10; }));
 let selected = null, dragging = null;
+let currentProjectId = localStorage.getItem('spiral-current-project');
 
 function save(){ localStorage.setItem('spiral-state', JSON.stringify(state)); }
 function center(){ return {x: canvas.width / devicePixelRatio / 2, y: canvas.height / devicePixelRatio / 2}; }
@@ -146,8 +147,20 @@ $('#constructionOpacity').value=state.constructionOpacity*100;$('#constructionOp
 $('#sides').value=state.sides;$('#sidesValue').textContent=`${state.sides} sides`;$('#sides').oninput=e=>{state.sides=+e.target.value;$('#sidesValue').textContent=`${state.sides} sides`;save();draw()};
 $('#resetBtn').onclick=()=>{if(confirm('Reset the diagram to its original state?')){state=structuredClone(defaults);selected=null;save();init()}};
 $('#exportBtn').onclick=()=>{draw();const a=document.createElement('a');a.download='spiral-story-diagram.png';a.href=canvas.toDataURL('image/png');a.click()};
+function getProjects(){try{return JSON.parse(localStorage.getItem('spiral-projects')||'[]')}catch{return[]}}
+function setProjects(projects){localStorage.setItem('spiral-projects',JSON.stringify(projects))}
+function renderProjects(){const projects=getProjects().sort((a,b)=>b.updatedAt-a.updatedAt);$('#projectCount').textContent=`${projects.length} project${projects.length===1?'':'s'}`;$('#recentProjects').innerHTML=projects.length?projects.map(project=>`<article class="project-card ${project.id===currentProjectId?'current':''}"><div class="project-thumb"><span>⌁</span></div><div><strong>${escapeHtml(project.name)}</strong><small>${formatProjectDate(project.updatedAt)}</small></div><button data-open-project="${project.id}">Open</button><button class="project-delete" data-delete-project="${project.id}" aria-label="Delete ${escapeHtml(project.name)}">×</button></article>`).join(''):'<div class="no-projects"><span>◇</span><strong>No saved projects yet</strong><small>Save this canvas to see it here.</small></div>';document.querySelectorAll('[data-open-project]').forEach(button=>button.onclick=()=>openProject(button.dataset.openProject));document.querySelectorAll('[data-delete-project]').forEach(button=>button.onclick=()=>deleteProject(button.dataset.deleteProject))}
+function escapeHtml(value){return String(value).replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]))}
+function formatProjectDate(timestamp){return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(timestamp)}
+function openProjects(){renderProjects();$('#projectsPanel').classList.remove('is-hidden');$('#projectsBackdrop').classList.remove('is-hidden');$('#projectName').focus()}
+function closeProjects(){$('#projectsPanel').classList.add('is-hidden');$('#projectsBackdrop').classList.add('is-hidden')}
+function saveProject(){const name=$('#projectName').value.trim()||'Untitled project',projects=getProjects(),now=Date.now();let project=projects.find(item=>item.id===currentProjectId);if(project){project.name=name;project.state=structuredClone(state);project.updatedAt=now}else{project={id:`project-${now}`,name,state:structuredClone(state),updatedAt:now};projects.push(project);currentProjectId=project.id;localStorage.setItem('spiral-current-project',currentProjectId)}setProjects(projects);renderProjects()}
+function openProject(id){const project=getProjects().find(item=>item.id===id);if(!project)return;state=structuredClone(project.state);currentProjectId=id;localStorage.setItem('spiral-current-project',id);$('#projectName').value=project.name;selected=null;save();init();closeProjects()}
+function deleteProject(id){setProjects(getProjects().filter(item=>item.id!==id));if(currentProjectId===id){currentProjectId=null;localStorage.removeItem('spiral-current-project')}renderProjects()}
+function newProject(){state=structuredClone(defaults);currentProjectId=null;localStorage.removeItem('spiral-current-project');$('#projectName').value='';selected=null;save();init();closeProjects()}
+$('#projectsBtn').onclick=openProjects;$('#closeProjects').onclick=closeProjects;$('#projectsBackdrop').onclick=closeProjects;$('#saveProject').onclick=saveProject;$('#newProject').onclick=newProject;
 document.querySelectorAll('.tab').forEach(tab=>tab.onclick=()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===tab));document.querySelectorAll('.tab-panel').forEach(panel=>panel.hidden=panel.querySelector('.section-body').id!==tab.dataset.tab)});
 $('#leftToggle').onclick=()=>{$('#sidebar').classList.toggle('is-hidden');document.body.classList.toggle('left-hidden');resize()};
 $('#rightToggle').onclick=()=>{$('#inspector').classList.remove('is-hidden');$('#rightToggle').classList.add('is-hidden');resize()};
 $('#themeBtn').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';document.body.classList.toggle('dark',state.theme==='dark');save();draw()};
-function init(){document.body.classList.toggle('dark',state.theme==='dark');renderLists();renderInspector();syncZoom();resize()} window.addEventListener('resize',resize);init();
+function init(){document.body.classList.toggle('dark',state.theme==='dark');const project=getProjects().find(item=>item.id===currentProjectId);if(project)$('#projectName').value=project.name;renderLists();renderInspector();syncZoom();resize()} window.addEventListener('resize',resize);init();

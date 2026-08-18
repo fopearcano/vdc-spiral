@@ -13,6 +13,7 @@
   <header class="topbar">
     <a class="brand" href="#" aria-label="Spiral home"><span class="brand-mark">S</span><span>spiral</span></a>
     <button class="panel-toggle" id="leftToggle" title="Show or hide tools" aria-label="Show or hide tools">☰</button>
+    <button class="projects-button" id="projectsBtn">Projects</button>
     <div class="top-actions"><button class="icon-button" id="themeBtn" title="Toggle dark theme" aria-label="Toggle dark theme">◐</button><button class="icon-button" id="resetBtn" title="Reset canvas">↻</button><button class="export" id="exportBtn">Export PNG <span>↗</span></button></div>
   </header>
 
@@ -107,6 +108,14 @@
     <aside class="inspector is-hidden" id="inspector"></aside>
     <button class="inspector-toggle is-hidden" id="rightToggle" title="Show properties" aria-label="Show properties">☷</button>
   </main>
+  <div class="projects-backdrop is-hidden" id="projectsBackdrop"></div>
+  <aside class="projects-panel is-hidden" id="projectsPanel" aria-label="Projects panel">
+    <div class="projects-header"><div><small>Workspace</small><h2>Projects</h2></div><button id="closeProjects" aria-label="Close projects">×</button></div>
+    <button class="new-project" id="newProject">＋ New project</button>
+    <div class="save-project"><label for="projectName">Project name</label><div><input id="projectName" type="text" maxlength="60" placeholder="Untitled project"><button id="saveProject">Save</button></div></div>
+    <div class="recent-heading"><strong>Recent projects</strong><span id="projectCount">0 projects</span></div>
+    <div class="recent-projects" id="recentProjects"></div>
+  </aside>
   <script src="app.js"></script>
 </body>
 </html>
