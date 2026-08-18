@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spiral — Story Geometry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Spiral home"><span class="brand-mark">S</span><span>spiral</span></a>
+    <nav aria-label="Workspace navigation"><button class="nav-link active">Canvas</button><button class="nav-link">About</button></nav>
+    <div class="top-actions"><span class="saved"><span></span>Saved locally</span><button class="icon-button" id="resetBtn" title="Reset canvas">↻</button><button class="export" id="exportBtn">Export PNG <span>↗</span></button></div>
+  </header>
+
+  <main>
+    <aside class="sidebar">
+      <div class="side-heading"><p>Diagram studio</p><h1>Story Geometry</h1><span>Map the gravity between characters.</span></div>
+
+      <section class="tool-section">
+        <button class="section-title" data-collapse="characters"><span><i class="dot red"></i>Characters</span><b>⌃</b></button>
+        <div id="characters" class="section-body">
+          <div id="characterList"></div>
+          <button class="add-button" id="addCharacter">＋ Add character</button>
+        </div>
+      </section>
+
+      <section class="tool-section">
+        <button class="section-title" data-collapse="circles"><span><i class="ring"></i>Intimacy circles</span><b>⌃</b></button>
+        <div id="circles" class="section-body">
+          <div id="circleList"></div>
+          <button class="add-button" id="addCircle">＋ Add circle</button>
+        </div>
+      </section>
+
+      <section class="tool-section">
+        <button class="section-title" data-collapse="overlays"><span><i class="swirl">⌁</i>Spiral overlays</span><b>⌃</b></button>
+        <div id="overlays" class="section-body overlays">
+          <label class="switch-line"><span><strong>Golden ratio</strong><small>Single logarithmic curve</small></span><input type="checkbox" id="goldenOn" checked><i></i></label>
+          <div class="compact-controls" id="goldenControls">
+            <label>Scale <input id="goldenScale" type="range" min="40" max="180" value="100"></label>
+            <label class="mini">Stroke <input id="goldenWidth" type="number" min="1" max="8" value="2"></label>
+            <input aria-label="Golden color" id="goldenColor" type="color" value="#d79b2c">
+          </div>
+          <label class="switch-line"><span><strong>Fibonacci bloom</strong><small>Rotated spiral system</small></span><input type="checkbox" id="fibOn" checked><i></i></label>
+          <div class="shape-control">
+            <div><label>Shape transform</label><output id="sidesValue">5 sides</output></div>
+            <input id="sides" type="range" min="3" max="12" value="5">
+            <div class="range-labels"><span>Triangle</span><span>12-gon</span></div>
+          </div>
+          <label class="switch-line subtle"><span><strong>Construction lines</strong></span><input type="checkbox" id="constructionOn" checked><i></i></label>
+          <div class="compact-controls">
+            <label>Opacity <input id="constructionOpacity" type="range" min="0" max="100" value="25"></label>
+            <input aria-label="Construction color" id="constructionColor" type="color" value="#8aa1a1">
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="workspace">
+      <div class="canvas-toolbar">
+        <div><button id="zoomOut">−</button><span id="zoomLabel">100%</span><button id="zoomIn">＋</button></div>
+        <button id="fitBtn" title="Fit view">⌗</button>
+        <span class="divider"></span>
+        <label class="grid-toggle"><input id="gridOn" type="checkbox" checked><span>Grid</span></label>
+      </div>
+      <canvas id="diagram" aria-label="Interactive spiral story diagram"></canvas>
+      <div class="canvas-hint"><span>↖</span> Drag characters to place them <i></i> Scroll to zoom</div>
+      <div class="legend"><span><i class="legend-line gold"></i>Fibonacci system</span><span><i class="legend-line gray"></i>Construction</span></div>
+    </section>
+
+    <aside class="inspector" id="inspector">
+      <div class="inspector-empty"><div>✦</div><h2>Select an element</h2><p>Choose a character or intimacy circle to edit its appearance.</p></div>
+    </aside>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
