@@ -45,15 +45,15 @@
         <div id="overlays" class="section-body overlays">
           <label class="switch-line"><span><strong>Golden ratio</strong><small>Single logarithmic curve</small></span><input type="checkbox" id="goldenOn" checked><i></i></label>
           <div class="compact-controls" id="goldenControls">
-            <label>Scale <input id="goldenScale" type="range" min="20" max="1000" value="100"></label>
+            <label>Scale <span class="range-number"><input id="goldenScale" type="range" min="1" max="5000" value="100"><input id="goldenScaleNumber" type="number" min="1" max="5000" value="100" aria-label="Golden scale percent"></span></label>
             <label class="mini">Stroke <input id="goldenWidth" type="number" min="1" max="8" value="2"></label>
             <input aria-label="Golden color" id="goldenColor" type="color" value="#d79b2c">
           </div>
           <label class="switch-line"><span><strong>Fibonacci bloom</strong><small>Rotated spiral system</small></span><input type="checkbox" id="fibOn" checked><i></i></label>
           <div class="shape-control">
             <div><label>Bloom scale</label><output id="fibScaleValue">100%</output></div>
-            <input id="fibScale" type="range" min="20" max="1000" value="100">
-            <div class="range-labels"><span>20%</span><span>1000%</span></div>
+            <span class="range-number"><input id="fibScale" type="range" min="1" max="5000" value="100"><input id="fibScaleNumber" type="number" min="1" max="5000" value="100" aria-label="Fibonacci scale percent"></span>
+            <div class="range-labels"><span>1%</span><span>5000%</span></div>
           </div>
           <div class="shape-control">
             <div><label>Shape transform</label><output id="sidesValue">5 sides</output></div>
