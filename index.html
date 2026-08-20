@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spiral — Story Geometry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Spiral home"><span class="brand-mark">S</span><span>spiral</span></a>
+    <button class="panel-toggle" id="leftToggle" title="Show or hide tools" aria-label="Show or hide tools">☰</button>
+    <button class="projects-button" id="projectsBtn">Projects</button>
+    <div class="top-actions"><button class="icon-button" id="themeBtn" title="Toggle dark theme" aria-label="Toggle dark theme">◐</button><button class="icon-button" id="resetBtn" title="Reset canvas">↻</button><button class="export" id="exportBtn">Export PNG <span>↗</span></button></div>
+  </header>
+
+  <main>
+    <aside class="sidebar" id="sidebar">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="characters" role="tab">Characters</button>
+        <button class="tab" data-tab="chapters" role="tab">Chapters</button>
+        <button class="tab" data-tab="scenes" role="tab">Scenes</button>
+        <button class="tab" data-tab="circles" role="tab">Circles</button>
+        <button class="tab" data-tab="overlays" role="tab">Spirals</button>
+      </div>
+
+      <section class="tool-section tab-panel">
+        <div class="section-title"><span><i class="dot red"></i>Characters</span><label class="mini-toggle" title="Show characters"><input id="charactersOn" type="checkbox" checked><i></i></label></div>
+        <div id="characters" class="section-body">
+          <div id="characterList"></div>
+          <div class="layer-appearance"><label>Overall size <span class="range-number"><input id="charactersScale" type="range" min="1" max="500" value="100"><input id="charactersScaleNumber" type="number" min="1" max="500" value="100"></span></label><label>Text size <span class="range-number"><input id="charactersTextScale" type="range" min="1" max="500" value="100"><input id="charactersTextScaleNumber" type="number" min="1" max="500" value="100"></span></label><label>Shape <select id="charactersPaint"><option value="fill">Fill</option><option value="stroke">Stroke</option></select></label></div>
+          <button class="add-button" id="addCharacter">＋ Add character</button>
+        </div>
+      </section>
+
+      <section class="tool-section tab-panel" hidden>
+        <div class="section-title"><span><i class="square blue"></i>Chapters</span><label class="mini-toggle" title="Show chapters"><input id="chaptersOn" type="checkbox" checked><i></i></label></div>
+        <div id="chapters" class="section-body">
+          <div id="chapterList"></div>
+          <div class="layer-appearance"><label>Overall size <span class="range-number"><input id="chaptersScale" type="range" min="1" max="500" value="100"><input id="chaptersScaleNumber" type="number" min="1" max="500" value="100"></span></label><label>Text size <span class="range-number"><input id="chaptersTextScale" type="range" min="1" max="500" value="100"><input id="chaptersTextScaleNumber" type="number" min="1" max="500" value="100"></span></label><label>Shape <select id="chaptersPaint"><option value="fill">Fill</option><option value="stroke">Stroke</option></select></label></div>
+          <button class="add-button" id="addChapter">＋ Add chapter</button>
+        </div>
+      </section>
+
+      <section class="tool-section tab-panel" hidden>
+        <div class="section-title"><span><i class="triangle green"></i>Scenes</span><label class="mini-toggle" title="Show scenes"><input id="scenesOn" type="checkbox" checked><i></i></label></div>
+        <div id="scenes" class="section-body">
+          <div id="sceneList"></div>
+          <div class="layer-appearance"><label>Overall size <span class="range-number"><input id="scenesScale" type="range" min="1" max="500" value="100"><input id="scenesScaleNumber" type="number" min="1" max="500" value="100"></span></label><label>Text size <span class="range-number"><input id="scenesTextScale" type="range" min="1" max="500" value="100"><input id="scenesTextScaleNumber" type="number" min="1" max="500" value="100"></span></label><label>Shape <select id="scenesPaint"><option value="fill">Fill</option><option value="stroke">Stroke</option></select></label></div>
+          <button class="add-button" id="addScene">＋ Add scene</button>
+        </div>
+      </section>
+
+      <section class="tool-section tab-panel" hidden>
+        <div class="section-title"><span><i class="ring"></i>Intimacy circles</span><label class="mini-toggle" title="Show circles"><input id="circlesOn" type="checkbox" checked><i></i></label></div>
+        <div id="circles" class="section-body">
+          <div id="circleList"></div>
+          <button class="add-button" id="addCircle">＋ Add circle</button>
+        </div>
+      </section>
+
+      <section class="tool-section tab-panel" hidden>
+        <div class="section-title"><span><i class="swirl">⌁</i>Spiral overlays</span></div>
+        <div id="overlays" class="section-body overlays">
+          <label class="switch-line"><span><strong>Golden ratio</strong><small>Single logarithmic curve</small></span><input type="checkbox" id="goldenOn" checked><i></i></label>
+          <div class="compact-controls" id="goldenControls">
+            <label>Scale <span class="range-number"><input id="goldenScale" type="range" min="1" max="5000" value="100"><input id="goldenScaleNumber" type="number" min="1" max="5000" value="100" aria-label="Golden scale percent"></span></label>
+            <label class="mini">Stroke <span class="range-number"><input id="goldenWidth" type="range" min="0.25" max="100" step="0.25" value="2"><input id="goldenWidthNumber" type="number" min="0.25" max="100" step="0.25" value="2"></span></label>
+            <input aria-label="Golden color" id="goldenColor" type="color" value="#d79b2c">
+          </div>
+          <div class="opacity-control"><label>Opacity <output id="goldenOpacityValue">90%</output></label><input id="goldenOpacity" type="range" min="0" max="100" value="90"></div>
+          <label class="switch-line"><span><strong>Fibonacci bloom</strong><small>Rotated spiral system</small></span><input type="checkbox" id="fibOn" checked><i></i></label>
+          <div class="shape-control">
+            <div><label>Bloom scale</label><output id="fibScaleValue">100%</output></div>
+            <span class="range-number"><input id="fibScale" type="range" min="1" max="5000" value="100"><input id="fibScaleNumber" type="number" min="1" max="5000" value="100" aria-label="Fibonacci scale percent"></span>
+            <div class="range-labels"><span>1%</span><span>5000%</span></div>
+          </div>
+          <div class="compact-controls spiral-appearance">
+            <label class="mini">Stroke <span class="range-number"><input id="fibWidth" type="range" min="0.25" max="100" step="0.25" value="2.2"><input id="fibWidthNumber" type="number" min="0.25" max="100" step="0.25" value="2.2"></span></label>
+            <label>Opacity <span class="range-number"><input id="fibOpacity" type="range" min="0" max="100" value="95"><input id="fibOpacityNumber" type="number" min="0" max="100" value="95" aria-label="Fibonacci opacity percent"></span></label>
+          </div>
+          <div class="shape-control">
+            <div><label>Shape transform</label><output id="sidesValue">5 sides</output></div>
+            <input id="sides" type="range" min="3" max="12" value="5">
+            <div class="range-labels"><span>Triangle</span><span>12-gon</span></div>
+          </div>
+          <label class="switch-line subtle"><span><strong>Construction lines</strong></span><input type="checkbox" id="constructionOn" checked><i></i></label>
+          <div class="compact-controls">
+            <label>Opacity <input id="constructionOpacity" type="range" min="0" max="100" value="25"></label>
+            <input aria-label="Construction color" id="constructionColor" type="color" value="#8aa1a1">
+          </div>
+          <div class="line-styles">
+            <label>Spiral lines <select id="spiralLineStyle"><option value="solid">Normal</option><option value="dotted">Dotted</option></select></label>
+            <label>Construction <select id="constructionLineStyle"><option value="solid">Normal</option><option value="dotted">Dotted</option></select></label>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="workspace">
+      <div class="canvas-toolbar">
+        <div><button id="zoomOut">−</button><span id="zoomLabel">100%</span><button id="zoomIn">＋</button></div>
+        <button id="fitBtn" title="Fit view">⌗</button>
+        <span class="divider"></span>
+        <label class="grid-toggle"><input id="gridOn" type="checkbox" checked><span>Grid</span></label>
+        <label class="grid-toggle"><input id="axesOn" type="checkbox" checked><span>Axes</span></label>
+        <label class="grid-toggle"><input id="axisNumbersOn" type="checkbox" checked><span>Numbers</span></label>
+      </div>
+      <canvas id="diagram" aria-label="Interactive spiral story diagram"></canvas>
+    </section>
+
+    <aside class="inspector is-hidden" id="inspector"></aside>
+    <button class="inspector-toggle is-hidden" id="rightToggle" title="Show properties" aria-label="Show properties">☷</button>
+  </main>
+  <div class="projects-backdrop is-hidden" id="projectsBackdrop"></div>
+  <aside class="projects-panel is-hidden" id="projectsPanel" aria-label="Projects panel">
+    <div class="projects-header"><div><small>Workspace</small><h2>Projects</h2></div><button id="closeProjects" aria-label="Close projects">×</button></div>
+    <button class="new-project" id="newProject">＋ New project</button>
+    <div class="save-project"><label for="projectName">Project name</label><div><input id="projectName" type="text" maxlength="60" placeholder="Untitled project"><button id="saveProject">Save</button></div></div>
+    <div class="recent-heading"><strong>Recent projects</strong><span id="projectCount">0 projects</span></div>
+    <div class="recent-projects" id="recentProjects"></div>
+  </aside>
+  <script src="app.js"></script>
+</body>
+</html>
